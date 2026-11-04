@@ -1,0 +1,10 @@
+1.ARCH=amd64
+PLATFORM=$(uname -s)_$ARCH
+
+2.curl -sLO "https://github.com/eksctl-io/eksctl/releases/latest/download/eksctl_${PLATFORM}.tar.gz"
+
+3.tar -xzf eksctl_${PLATFORM}.tar.gz
+
+4.sudo install -m 0755 eksctl /usr/local/bin/eksctl
+
+5.sudo install -m 0755 eksctl /usr/local/bin/eksctl

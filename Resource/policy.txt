@@ -1,0 +1,42 @@
+-----------------Create policy----------------------
+cat > trust-policy.json <<'EOF'
+{
+  "Version": "2012-10-17",
+  "Statement": [
+    {
+      "Effect": "Allow",
+      "Principal": {
+        "Federated": "arn:aws:iam::463646775279:oidc-provider/oidc.eks.ap-south-1.amazonaws.com/id/A271FB8EE919A407B8A67813B1C1F6C6"
+      },
+      "Action": "sts:AssumeRoleWithWebIdentity",
+      "Condition": {
+        "StringEquals": {
+          "oidc.eks.ap-south-1.amazonaws.com/id/A271FB8EE919A407B8A67813B1C1F6C6:aud": "sts.amazonaws.com",
+          "oidc.eks.ap-south-1.amazonaws.com/id/A271FB8EE919A407B8A67813B1C1F6C6:sub": "system:serviceaccount:kube-system:aws-load-balancer-controller"
+        }
+      }
+    }
+  ]
+}
+EOF
+
+
+------------------update IAM Role -------------------------------
+
+aws iam update-assume-role-policy \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --policy-document file://trust-policy.json
+
+
+----------------Attach Policy --------------------------
+
+aws iam attach-role-policy \
+  --role-name AmazonEKSLoadBalancerControllerRole \
+  --policy-arn arn:aws:iam::463646775279:policy/AWSLoadBalancerControllerIAMPolicy
+
+
+--------------Verify Attachment--------------------------
+
+aws iam list-attached-role-policies \
+  --role-name AmazonEKSLoadBalancerControllerRole
+
